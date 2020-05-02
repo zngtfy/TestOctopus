@@ -1,0 +1,10 @@
+**********************
+** Jenkins in Linux **
+**********************
+
+Add execute shell
+
+dotnet test
+dotnet publish -c Release
+octo pack --id TestOctopus --version 1.0.$BUILD_NUMBER --include TestOctopus/bin/Release/netcoreapp3.1/publish/
+octo push --server https://yexc.octopus.com --package TestOctopus.1.0.$BUILD_NUMBER.nupkg --apiKey $OctoKey
