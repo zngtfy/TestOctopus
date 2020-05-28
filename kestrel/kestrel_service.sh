@@ -1,6 +1,6 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          <SCRIPT_NAME>
+# Provides:          kestrel
 # Required-Start:    $local_fs $network $named $time $syslog
 # Required-Stop:     $local_fs $network $named $time $syslog
 # Default-Start:     2 3 4 5
@@ -10,9 +10,9 @@
 
 # Author: Ivan Derevianko aka druss <drussilla7@gmail.com>
 
-WWW_USER=<USERNAME>
-DNXRUNTIME=<PATH_TO_RUNTIME> #/home/$WWW_USER/.k/runtimes/kre-mono.1.0.0-beta3/bin/k
-APPROOT=<PATH_TO_APPLICATION> #/home/$WWW_USER/vNext/mvc/HelloMvc
+WWW_USER=aspnet
+DNXRUNTIME=dotnet
+APPROOT=/home/aspnet/TestOctopus/1.0.20
 
 PIDFILE=$APPROOT/kestrel.pid
 LOGFILE=$APPROOT/kestrel.log

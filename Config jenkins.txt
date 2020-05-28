@@ -2,14 +2,65 @@
 ** Jenkins in Linux **
 **********************
 
+Add plugin
+https://plugins.jenkins.io/git/
+https://plugins.jenkins.io/publish-over-ssh/
+
+Git
 https://github.com/zngtfy/TestOctopus.git
+
+Poll SCM
 H/5 * * * *
 
+Add build step -> Execute shell
 dotnet test
-dotnet publish -c Release
+dotnet publish -c Release -o /var/jenkins_home/workspace/TestOctopus/publish/
+cd /var/jenkins_home/workspace/TestOctopus/publish/
+tar -zcvf /var/jenkins_home/workspace/TestOctopus/TestOctopus.1.0.$BUILD_NUMBER.tar.gz .
 
+Add build step -> Execute shell
 octo pack --id TestOctopus --version 1.0.$BUILD_NUMBER --include TestOctopus/bin/Release/netcoreapp3.1/publish/
+
+SSH Server
+Name: ubtssh-aspnet (7022)
+Host: appointvn.com
+User: aspnet
+Port: 7022
+
+TestOctopus.1.0.$BUILD_NUMBER.tar.gz
+TestOctopus
+
+cd TestOctopus
+mkdir 1.0.$BUILD_NUMBER
+tar -zxvf TestOctopus.1.0.$BUILD_NUMBER.tar.gz -C 1.0.$BUILD_NUMBER
+cd 1.0.$BUILD_NUMBER
+export ASPNETCORE_URLS=http://+:5000
+dotnet TestOctopus.dll
+
+kill $(ps aux | grep 'TestOctopus.dll' | awk '{print $2}')
+
+
+
+cp /home/aspnet/kestrel_service.sh /etc/init.d/kestrel
+chmod +x /etc/init.d/kestrel
+service kestrel start
+
+
+
+https://plugins.jenkins.io/credentials-binding
 octo push --server https://yexc.octopus.com --package TestOctopus.1.0.$BUILD_NUMBER.nupkg --apiKey $OctoKey
 
-sudo docker cp ~/TestOctopus aspnet-ssh:/home/aspnet
-dotnet TestOctopus/TestOctopus.dll --urls=http://*:5000
+
+
+dotnet publish -c Release -o E:\TestOctopus\publish
+sudo docker cp TestOctopus ubtssh-aspnet:/home/aspnet/TestOctopus
+
+sudo docker exec -it ubtssh-aspnet /bin/bash
+cd /home/aspnet/TestOctopus
+export ASPNETCORE_URLS=http://+:5000
+dotnet TestOctopus.dll
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+	ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
